@@ -32,7 +32,7 @@ async function run(): Promise<void> {
     }
 
     let commentId = null
-    execSync(`${commandToRun} -- --changeSince=origin/develop`)
+    execSync(`${commandToRun} -- --changedSince=origin/develop`)
 
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
@@ -44,6 +44,7 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync('develop-coverage-summary.json').toString())
     )
+    console.log(codeCoverageOld)
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
