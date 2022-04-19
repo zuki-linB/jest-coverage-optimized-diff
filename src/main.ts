@@ -16,7 +16,6 @@ async function run(): Promise<void> {
     const githubToken = core.getInput('accessToken')
     const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
     const commandToRun = core.getInput('runCommand')
-    const commandAfterSwitch = core.getInput('afterSwitchCommand')
     const delta = Number(core.getInput('delta'))
     const rawTotalDelta = core.getInput('total_delta')
     const githubClient = github.getOctokit(githubToken)
@@ -38,12 +37,9 @@ async function run(): Promise<void> {
     execSync('/usr/bin/git fetch')
     execSync('/usr/bin/git stash')
     execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
-    if (commandAfterSwitch) {
-      execSync(commandAfterSwitch)
-    }
-    execSync(commandToRun)
+  
     const codeCoverageOld = <CoverageReport>(
-      JSON.parse(fs.readFileSync('coverage-summary.json').toString())
+      JSON.parse(fs.readFileSync('develop-coverage-summary.json').toString())
     )
     const currentDirectory = execSync('pwd')
       .toString()
