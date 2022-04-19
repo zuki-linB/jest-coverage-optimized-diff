@@ -26,17 +26,20 @@ async function run(): Promise<void> {
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`
     const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
     let totalDelta = null
+
     if (rawTotalDelta !== null) {
       totalDelta = Number(rawTotalDelta)
     }
+
     let commentId = null
-    execSync(commandToRun)
+    execSync(`${commandToRun} -- --changeSince=origin/develop`)
+
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
-    execSync('/usr/bin/git fetch')
-    execSync('/usr/bin/git stash')
-    execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
+    // execSync('/usr/bin/git fetch')
+    // execSync('/usr/bin/git stash')
+    // execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
   
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync('develop-coverage-summary.json').toString())
@@ -44,6 +47,7 @@ async function run(): Promise<void> {
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
+
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
       codeCoverageOld

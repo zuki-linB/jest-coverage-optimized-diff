@@ -5,24 +5,32 @@ inputs:
   accessToken:
     description: 'access token required to comment on a pr'
     default: ${{ github.token }}
+    
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     default: false
+
   runCommand:
     description: 'custom command to get json-summary'
     default: 'npx jest --coverage --coverageReporters="json-summary" --coverageDirectory="./"'
+
   delta:
     description: 'Difference between the old and final test coverage'
     default: 100
+
   total_delta:
     description: 'Difference between the old and final test coverage at the total level'
     default: null
+
   useSameComment:
     description: 'While commenting on the PR update the exisiting comment'
     default: false
+
   main-branch-coverage-summary-file-name:
     description: 'file name of main branch summary (master)'
     default: 'develop-coverage-summary.json'
+
+
 branding:
   color: red
   icon: git-pull-request
