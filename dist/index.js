@@ -2041,20 +2041,16 @@ function run() {
             const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
             const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
             let totalDelta = null;
-            console.log('>>>>>>1');
             if (rawTotalDelta !== null) {
                 totalDelta = Number(rawTotalDelta);
             }
-            console.log('>>>>>>2');
             let commentId = null;
             child_process_1.execSync(`${commandToRun}`);
-            console.log('>>>>>>3');
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
             // execSync('/usr/bin/git fetch')
             // execSync('/usr/bin/git stash')
             // execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync('develop-coverage-summary.json').toString()));
-            console.log(codeCoverageOld);
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
@@ -6753,8 +6749,7 @@ class DiffChecker {
         this.diffCoverageReport = {};
         const reportNewKeys = Object.keys(coverageReportNew);
         const reportOldKeys = Object.keys(coverageReportOld);
-        // const reportKeys = new Set([...reportNewKeys, ...reportOldKeys])
-        const reportKeys = new Set([...reportNewKeys]);
+        const reportKeys = new Set([...reportNewKeys, ...reportOldKeys]);
         for (const filePath of reportKeys) {
             this.diffCoverageReport[filePath] = {
                 branches: {
