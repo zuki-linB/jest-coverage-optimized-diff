@@ -26,13 +26,16 @@ async function run(): Promise<void> {
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`
     const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
     let totalDelta = null
+    console.log(">>>>>>1")
 
     if (rawTotalDelta !== null) {
       totalDelta = Number(rawTotalDelta)
     }
+    console.log(">>>>>>2")
 
     let commentId = null
-    execSync(`${commandToRun} -- --changedSince=origin/develop`)
+    execSync(`${commandToRun}`)
+    console.log(">>>>>>3")
 
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
