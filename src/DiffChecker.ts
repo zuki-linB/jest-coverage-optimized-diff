@@ -19,7 +19,7 @@ export class DiffChecker {
     const reportNewKeys = Object.keys(coverageReportNew)
     const reportOldKeys = Object.keys(coverageReportOld)
     // const reportKeys = new Set([...reportNewKeys, ...reportOldKeys])
-    const reportKeys = new Set([...reportNewKeys ])
+    const reportKeys = new Set([...reportNewKeys])
 
     for (const filePath of reportKeys) {
       this.diffCoverageReport[filePath] = {
