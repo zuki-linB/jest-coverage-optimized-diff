@@ -2033,6 +2033,7 @@ function run() {
             const commandToRun = core.getInput('runCommand');
             const delta = Number(core.getInput('delta'));
             const rawTotalDelta = core.getInput('total_delta');
+            const mainBranchCoverageSummaryFileName = core.getInput('mainBranchCoverageSummaryFileName');
             const githubClient = github.getOctokit(githubToken);
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
@@ -2047,14 +2048,13 @@ function run() {
             let commentId = null;
             child_process_1.execSync(`${commandToRun}`);
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
-            // execSync('/usr/bin/git fetch')
-            // execSync('/usr/bin/git stash')
-            // execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
-            const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync('develop-coverage-summary.json').toString()));
+            const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync(mainBranchCoverageSummaryFileName).toString()));
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
+            console.log('>>>>>> START DIFF CHECK');
             const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, codeCoverageOld);
+            console.log('>>>>>> END DIFF CHECK');
             let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);

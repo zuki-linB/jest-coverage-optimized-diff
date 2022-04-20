@@ -18,6 +18,9 @@ async function run(): Promise<void> {
     const commandToRun = core.getInput('runCommand')
     const delta = Number(core.getInput('delta'))
     const rawTotalDelta = core.getInput('total_delta')
+    const mainBranchCoverageSummaryFileName = core.getInput(
+      'mainBranchCoverageSummaryFileName'
+    )
     const githubClient = github.getOctokit(githubToken)
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref
@@ -37,22 +40,21 @@ async function run(): Promise<void> {
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
-    // execSync('/usr/bin/git fetch')
-    // execSync('/usr/bin/git stash')
-    // execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
 
     const codeCoverageOld = <CoverageReport>(
-      JSON.parse(fs.readFileSync('develop-coverage-summary.json').toString())
+      JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
 
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
-
+    console.log('>>>>>> START DIFF CHECK')
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
       codeCoverageOld
     )
+    console.log('>>>>>> END DIFF CHECK')
+
     let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`
     const coverageDetails = diffChecker.getCoverageDetails(

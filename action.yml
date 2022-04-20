@@ -26,7 +26,7 @@ inputs:
     description: 'While commenting on the PR update the exisiting comment'
     default: false
 
-  main-branch-coverage-summary-file-name:
+  mainBranchCoverageSummaryFileName:
     description: 'file name of main branch summary (master)'
     default: 'develop-coverage-summary.json'
 
