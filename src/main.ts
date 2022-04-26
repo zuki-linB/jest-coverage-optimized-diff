@@ -16,6 +16,8 @@ async function run(): Promise<void> {
     const githubToken = core.getInput('accessToken')
     const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
     const commandToRun = core.getInput('runCommand')
+    const additionalCommentInfo = core.getInput('additionalCommentInfo')
+
     const delta = Number(core.getInput('delta'))
     const rawTotalDelta = core.getInput('total_delta')
     const mainBranchCoverageSummaryFileName = core.getInput(
@@ -48,12 +50,10 @@ async function run(): Promise<void> {
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
-    console.log('>>>>>> START DIFF CHECK')
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
       codeCoverageOld
     )
-    console.log('>>>>>> END DIFF CHECK')
 
     let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`
@@ -101,6 +101,10 @@ async function run(): Promise<void> {
       }
       messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`
       messageToPost = `${deltaCommentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`
+      if (additionalCommentInfo) {
+        messageToPost = `${messageToPost}\n${additionalCommentInfo}`
+      }
+
       await createOrUpdateComment(
         commentId,
         githubClient,

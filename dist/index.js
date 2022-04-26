@@ -2031,6 +2031,7 @@ function run() {
             const githubToken = core.getInput('accessToken');
             const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
             const commandToRun = core.getInput('runCommand');
+            const additionalCommentInfo = core.getInput('additionalCommentInfo');
             const delta = Number(core.getInput('delta'));
             const rawTotalDelta = core.getInput('total_delta');
             const mainBranchCoverageSummaryFileName = core.getInput('mainBranchCoverageSummaryFileName');
@@ -2052,9 +2053,7 @@ function run() {
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
-            console.log('>>>>>> START DIFF CHECK');
             const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, codeCoverageOld);
-            console.log('>>>>>> END DIFF CHECK');
             let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
@@ -2079,6 +2078,9 @@ function run() {
                 }
                 messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`;
                 messageToPost = `${deltaCommentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`;
+                if (additionalCommentInfo) {
+                    messageToPost = `${messageToPost}\n${additionalCommentInfo}`;
+                }
                 yield createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber);
                 throw Error(messageToPost);
             }

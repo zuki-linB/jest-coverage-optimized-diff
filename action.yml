@@ -30,6 +30,9 @@ inputs:
     description: 'file name of main branch summary (master)'
     default: 'develop-coverage-summary.json'
 
+  additionalCommentInfo:
+    description: 'Additional string that will be concatenated to comment'
+    default: null
 
 branding:
   color: red
