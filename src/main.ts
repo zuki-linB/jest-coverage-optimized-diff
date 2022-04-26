@@ -17,6 +17,7 @@ async function run(): Promise<void> {
     const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
     const commandToRun = core.getInput('runCommand')
     const additionalCommentInfo = core.getInput('additionalCommentInfo')
+    const codeCoverageDirectory = core.getInput('codeCoverageDirectory')
 
     const delta = Number(core.getInput('delta'))
     const rawTotalDelta = core.getInput('total_delta')
@@ -40,7 +41,7 @@ async function run(): Promise<void> {
     execSync(`${commandToRun}`)
 
     const codeCoverageNew = <CoverageReport>(
-      JSON.parse(fs.readFileSync('coverage-summary.json').toString())
+      JSON.parse(fs.readFileSync(codeCoverageDirectory).toString())
     )
 
     const codeCoverageOld = <CoverageReport>(

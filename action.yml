@@ -34,6 +34,9 @@ inputs:
     description: 'Additional string that will be concatenated to comment'
     default: null
 
+  codeCoverageDirectory:
+    description: 'code coverage summary location defaults to coverage-summary.json'
+    default: coverage-summary.json
 branding:
   color: red
   icon: git-pull-request
