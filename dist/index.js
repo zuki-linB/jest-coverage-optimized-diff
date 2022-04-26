@@ -2032,6 +2032,7 @@ function run() {
             const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
             const commandToRun = core.getInput('runCommand');
             const additionalCommentInfo = core.getInput('additionalCommentInfo');
+            const codeCoverageDirectory = core.getInput('codeCoverageDirectory');
             const delta = Number(core.getInput('delta'));
             const rawTotalDelta = core.getInput('total_delta');
             const mainBranchCoverageSummaryFileName = core.getInput('mainBranchCoverageSummaryFileName');
@@ -2048,7 +2049,7 @@ function run() {
             }
             let commentId = null;
             child_process_1.execSync(`${commandToRun}`);
-            const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
+            const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync(codeCoverageDirectory).toString()));
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync(mainBranchCoverageSummaryFileName).toString()));
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
