@@ -32,7 +32,7 @@ async function run(): Promise<void> {
     let commentId = null
     execSync(commandToRun)
     const codeCoverageNew = <CoverageReport>(
-      JSON.parse(fs.readFileSync('coverage-summary.json').toString())
+      JSON.parse(fs.readFileSync(codeCoverageDirectory).toString())
     )
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
