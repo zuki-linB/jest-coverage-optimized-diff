@@ -18,36 +18,25 @@ async function run(): Promise<void> {
     const commandToRun = core.getInput('runCommand')
     const additionalCommentInfo = core.getInput('additionalCommentInfo')
     const codeCoverageDirectory = core.getInput('codeCoverageDirectory')
-
     const delta = Number(core.getInput('delta'))
-    const rawTotalDelta = core.getInput('total_delta')
-    const mainBranchCoverageSummaryFileName = core.getInput(
-      'mainBranchCoverageSummaryFileName'
-    )
     const githubClient = github.getOctokit(githubToken)
     const prNumber = github.context.issue.number
     const branchNameBase = github.context.payload.pull_request?.base.ref
     const branchNameHead = github.context.payload.pull_request?.head.ref
+    const mainBranchCoverageSummaryFileName = core.getInput(
+      'mainBranchCoverageSummaryFileName'
+    )
     const useSameComment = JSON.parse(core.getInput('useSameComment'))
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`
     const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
-    let totalDelta = null
-
-    if (rawTotalDelta !== null) {
-      totalDelta = Number(rawTotalDelta)
-    }
-
     let commentId = null
-    execSync(`${commandToRun}`)
-
+    execSync(commandToRun)
     const codeCoverageNew = <CoverageReport>(
-      JSON.parse(fs.readFileSync(codeCoverageDirectory).toString())
+      JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
-
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
-
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
@@ -55,7 +44,6 @@ async function run(): Promise<void> {
       codeCoverageNew,
       codeCoverageOld
     )
-
     let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`
     const coverageDetails = diffChecker.getCoverageDetails(
@@ -90,7 +78,7 @@ async function run(): Promise<void> {
     )
 
     // check if the test coverage is falling below delta/tolerance.
-    if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta)) {
+    if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta)) {
       if (useSameComment) {
         commentId = await findComment(
           githubClient,
@@ -105,7 +93,6 @@ async function run(): Promise<void> {
       if (additionalCommentInfo) {
         messageToPost = `${messageToPost}\n${additionalCommentInfo}`
       }
-
       await createOrUpdateComment(
         commentId,
         githubClient,

@@ -2034,22 +2034,17 @@ function run() {
             const additionalCommentInfo = core.getInput('additionalCommentInfo');
             const codeCoverageDirectory = core.getInput('codeCoverageDirectory');
             const delta = Number(core.getInput('delta'));
-            const rawTotalDelta = core.getInput('total_delta');
-            const mainBranchCoverageSummaryFileName = core.getInput('mainBranchCoverageSummaryFileName');
             const githubClient = github.getOctokit(githubToken);
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
             const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
+            const mainBranchCoverageSummaryFileName = core.getInput('mainBranchCoverageSummaryFileName');
             const useSameComment = JSON.parse(core.getInput('useSameComment'));
             const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
             const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
-            let totalDelta = null;
-            if (rawTotalDelta !== null) {
-                totalDelta = Number(rawTotalDelta);
-            }
             let commentId = null;
-            child_process_1.execSync(`${commandToRun}`);
-            const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync(codeCoverageDirectory).toString()));
+            child_process_1.execSync(commandToRun);
+            const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync(mainBranchCoverageSummaryFileName).toString()));
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
@@ -2073,7 +2068,7 @@ function run() {
             }
             yield createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber);
             // check if the test coverage is falling below delta/tolerance.
-            if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta)) {
+            if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta)) {
                 if (useSameComment) {
                     commentId = yield findComment(githubClient, repoName, repoOwner, prNumber, deltaCommentIdentifier);
                 }
@@ -6716,32 +6711,12 @@ module.exports = isPlainObject;
 /***/ }),
 
 /***/ 563:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiffChecker = void 0;
-const core = __importStar(__webpack_require__(470));
 const increasedCoverageIcon = ':green_circle:';
 const decreasedCoverageIcon = ':red_circle:';
 const newCoverageIcon = ':sparkles: :new:';
@@ -6789,24 +6764,20 @@ class DiffChecker {
         }
         return returnStrings;
     }
-    checkIfTestCoverageFallsBelowDelta(delta, totalDelta) {
-        const files = Object.keys(this.diffCoverageReport);
-        for (const file of files) {
-            const diffCoverageData = this.diffCoverageReport[file];
+    checkIfTestCoverageFallsBelowDelta(delta) {
+        const keys = Object.keys(this.diffCoverageReport);
+        for (const key of keys) {
+            const diffCoverageData = this.diffCoverageReport[key];
             const keys = Object.keys(diffCoverageData);
             // No new coverage found so that means we deleted a file coverage
             const fileRemovedCoverage = Object.values(diffCoverageData).every(coverageData => coverageData.newPct === 0);
             if (fileRemovedCoverage) {
-                core.info(`${file} : deleted or renamed and is not considered for coverage diff.`);
                 // since the file is deleted don't include in delta calculation
                 continue;
             }
             for (const key of keys) {
                 if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
-                    const deltaToCompareWith = file === 'total' && totalDelta !== null ? totalDelta : delta;
-                    if (-this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith) {
-                        const percentageDiff = this.getPercentageDiff(diffCoverageData[key]);
-                        core.info(`percentage Diff: ${percentageDiff} is greater than delta for ${file}`);
+                    if (-this.getPercentageDiff(diffCoverageData[key]) > delta) {
                         return true;
                     }
                 }
