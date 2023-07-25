@@ -1,6 +1,6 @@
 {
   "name": "jest-coverage-diff-only-latest-changes",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "A github action to comment jest coverage diff on a PR",
   "main": "src/main.ts",
@@ -23,7 +23,7 @@
     "jest",
     "coverage"
   ],
-  "author": "Anuraag Puri",
+  "author": "Zuki Sarusi",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.4",
