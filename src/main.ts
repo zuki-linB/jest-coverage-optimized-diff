@@ -37,6 +37,7 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
+    console.log({codeCoverageNew, codeCoverageOld})
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
