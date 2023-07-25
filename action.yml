@@ -1,11 +1,11 @@
-name: 'Jest coverage referencing main branch existing summary'
+name: 'Jest coverage referencing main branch existing summary validate only latest changes'
 description: 'A github action to comment jest coverage diff on a PR using current branch vs already existing main branch summary'
-author: 'Fadi Khayo'
+author: 'Zuki Sarusi'
 inputs:
   accessToken:
     description: 'access token required to comment on a pr'
     default: ${{ github.token }}
-    
+
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     default: false
