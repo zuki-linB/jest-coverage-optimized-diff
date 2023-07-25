@@ -37,13 +37,22 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
-    console.log({codeCoverageNew, codeCoverageOld})
+    const resolvedCodeCoverageOld = Object.entries(codeCoverageOld).reduce(
+      // @ts-ignore
+      ([key, value], acc) => {
+        if (codeCoverageNew[key]) {
+          acc[key] = value
+        }
+        return acc
+      },
+      {}
+    )
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
-      codeCoverageOld
+      resolvedCodeCoverageOld
     )
     let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`

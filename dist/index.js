@@ -2046,11 +2046,18 @@ function run() {
             child_process_1.execSync(commandToRun);
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync(codeCoverageDirectory).toString()));
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync(mainBranchCoverageSummaryFileName).toString()));
-            console.log({ codeCoverageNew, codeCoverageOld });
+            const resolvedCodeCoverageOld = Object.entries(codeCoverageOld).reduce(
+            // @ts-ignore
+            ([key, value], acc) => {
+                if (codeCoverageNew[key]) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {});
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
-            const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, codeCoverageOld);
+            const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, resolvedCodeCoverageOld);
             let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
