@@ -2046,6 +2046,7 @@ function run() {
             child_process_1.execSync(commandToRun);
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync(codeCoverageDirectory).toString()));
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync(mainBranchCoverageSummaryFileName).toString()));
+            console.log({ codeCoverageNew, codeCoverageOld });
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
