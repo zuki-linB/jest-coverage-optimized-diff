@@ -11,6 +11,7 @@ const removedCoverageIcon = ':x:'
 
 export class DiffChecker {
   private diffCoverageReport: DiffCoverageReport = {}
+
   constructor(
     coverageReportNew: CoverageReport,
     coverageReportOld: CoverageReport
@@ -18,7 +19,7 @@ export class DiffChecker {
     const reportNewKeys = Object.keys(coverageReportNew)
     const reportOldKeys = Object.keys(coverageReportOld)
     const reportKeys = new Set([...reportNewKeys, ...reportOldKeys])
-
+    console.log({reportKeys})
     for (const filePath of reportKeys) {
       this.diffCoverageReport[filePath] = {
         branches: {
@@ -39,6 +40,7 @@ export class DiffChecker {
         }
       }
     }
+    console.log({diffCoverageReport: this.diffCoverageReport})
   }
 
   getCoverageDetails(diffOnly: boolean, currentDirectory: string): string[] {
