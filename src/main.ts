@@ -39,22 +39,18 @@ async function run(): Promise<void> {
     )
     const initAcc: CoverageReport = {}
     const entries = Object.entries(codeCoverageOld)
-    console.log({codeCoverageNew})
-    console.log({codeCoverageOld})
-    console.log({entries})
-    // const resolvedCodeCoverageOld = entries.reduce((acc, [key, value]) => {
-    //   if (codeCoverageNew[key]) {
-    //     acc[key] = value
-    //   }
-    //   return acc
-    // }, initAcc)
-    // console.log({resolvedCodeCoverageOld})
+    const resolvedCodeCoverageOld = entries.reduce((acc, [key, value]) => {
+      if (codeCoverageNew[key]) {
+        acc[key] = value
+      }
+      return acc
+    }, initAcc)
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
-      codeCoverageOld
+      resolvedCodeCoverageOld
     )
     let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`
@@ -123,14 +119,14 @@ async function run(): Promise<void> {
 
 async function createOrUpdateComment(
   commentId: number | null,
-  githubClient: {[x: string]: any} & {[x: string]: any} & Octokit &
-    RestEndpointMethods & {paginate: PaginateInterface},
+  githubClient: Octokit,
   repoOwner: string,
   repoName: string,
   messageToPost: string,
   prNumber: number
 ) {
   if (commentId) {
+    // @ts-ignore
     await githubClient.issues.updateComment({
       owner: repoOwner,
       repo: repoName,
@@ -138,6 +134,7 @@ async function createOrUpdateComment(
       body: messageToPost
     })
   } else {
+    // @ts-ignore
     await githubClient.issues.createComment({
       repo: repoName,
       owner: repoOwner,
@@ -148,13 +145,13 @@ async function createOrUpdateComment(
 }
 
 async function findComment(
-  githubClient: {[x: string]: any} & {[x: string]: any} & Octokit &
-    RestEndpointMethods & {paginate: PaginateInterface},
+  githubClient: Octokit,
   repoName: string,
   repoOwner: string,
   prNumber: number,
   identifier: string
 ): Promise<number> {
+  // @ts-ignore
   const comments = await githubClient.issues.listComments({
     owner: repoOwner,
     repo: repoName,
