@@ -42,19 +42,19 @@ async function run(): Promise<void> {
     console.log({codeCoverageNew})
     console.log({codeCoverageOld})
     console.log({entries})
-    const resolvedCodeCoverageOld = entries.reduce((acc, [key, value]) => {
-      if (codeCoverageNew[key]) {
-        acc[key] = value
-      }
-      return acc
-    }, initAcc)
-    console.log({resolvedCodeCoverageOld})
+    // const resolvedCodeCoverageOld = entries.reduce((acc, [key, value]) => {
+    //   if (codeCoverageNew[key]) {
+    //     acc[key] = value
+    //   }
+    //   return acc
+    // }, initAcc)
+    // console.log({resolvedCodeCoverageOld})
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
-      resolvedCodeCoverageOld
+      codeCoverageOld
     )
     let messageToPost = `## Test coverage results :test_tube: \n
     Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`
