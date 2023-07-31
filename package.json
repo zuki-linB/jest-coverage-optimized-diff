@@ -1,6 +1,6 @@
 {
   "name": "jest-coverage-diff-only-latest-changes",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "private": true,
   "description": "A github action to comment jest coverage diff on a PR",
   "main": "src/main.ts",
