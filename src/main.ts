@@ -38,9 +38,9 @@ async function run(): Promise<void> {
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
     const resolvedCodeCoverageOld = Object.entries(codeCoverageOld).reduce(
-      // @ts-ignore
-      ([key, value], acc) => {
+      (acc, [key, value]) => {
         if (codeCoverageNew[key]) {
+          // @ts-ignore
           acc[key] = value
         }
         return acc
