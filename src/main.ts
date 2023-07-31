@@ -37,14 +37,16 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
-    const initAcc: CoverageReport = {}
-    const entries = Object.entries(codeCoverageOld)
-    const resolvedCodeCoverageOld = entries.reduce((acc, [key, value]) => {
-      if (codeCoverageNew[key]) {
-        acc[key] = value
-      }
-      return acc
-    }, initAcc)
+    const resolvedCodeCoverageOld = Object.entries(codeCoverageOld).reduce(
+      (acc, [key, value]) => {
+        if (codeCoverageNew[key]) {
+          // @ts-ignore
+          acc[key] = value
+        }
+        return acc
+      },
+      {}
+    )
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
