@@ -37,19 +37,17 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync(mainBranchCoverageSummaryFileName).toString())
     )
-    console.log({codeCoverageNew})
-    console.log({codeCoverageOld})
+
     const resolvedCodeCoverageOld = Object.entries(codeCoverageOld).reduce(
-      // @ts-ignore
-      ([key, value], acc) => {
+      (acc, [key, value]) => {
         if (codeCoverageNew[key]) {
+          // @ts-ignore
           acc[key] = value
         }
         return acc
       },
       {}
     )
-    console.log({resolvedCodeCoverageOld})
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
@@ -63,7 +61,6 @@ async function run(): Promise<void> {
       !fullCoverage,
       `${currentDirectory}/`
     )
-    console.log({coverageDetails})
 
     if (coverageDetails.length === 0) {
       messageToPost =
